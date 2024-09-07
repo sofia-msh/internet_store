@@ -9,7 +9,7 @@ def read_file_into_list(file_path: str) -> list[str]:
 
 products = read_file_into_list("randoms/products.txt")
 
-def get_some_from_products_lines(products: str) -> str:
+def get_some_from_products_lines() -> str:
     return random.choice(products)
 
 
