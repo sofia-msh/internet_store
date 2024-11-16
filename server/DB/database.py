@@ -104,7 +104,7 @@ class DataBase():
 
     def SelectUserByName(self, username):
         sql_code = ("select Count(*) from users where username = ?")
-        self.cursor.execute(sql_code, username)
+        self.cursor.execute(sql_code, (username,))
         user = self.cursor.fetchone()
         if user is None:
             return True

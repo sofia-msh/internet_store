@@ -17,7 +17,7 @@ class Router:
         def registration():
             req_data = request.json
             username = req_data["username"]
-            if self.database.SelectUserByName(username):
+            if not self.database.SelectUserByName(username):
                 email = req_data["email"]
                 password = req_data["password"]
                 user = m.User(username, email, password)

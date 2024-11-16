@@ -7,8 +7,8 @@ if __name__ == '__main__':
     app = Flask(__name__)
     db1 = db.DataBase('sonya_db')
     router = rt.Router(app, db1)
-    #db1.DropTables()
-    #db1.CreateAllTables()
+    db1.DropTables()
+    db1.CreateAllTables()
     router.run()
     router.define_routes()
 
