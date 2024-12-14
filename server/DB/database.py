@@ -67,9 +67,11 @@ class DataBase():
         self.cursor.execute(sql_code)
 
     def InsertIntoProducts(self, product: m.Product):
-        sql_code = ("INSERT INTO products (name, price) VALUES (?,?)")
+        sql_code = ("INSERT INTO products (name, price) VALUES (?,?) returning id")
         values = (product.name, product.price)  # добавляем данные в кортедж
         self.cursor.execute(sql_code, values)  # вставляем данные в бд
+        id = self.cursor.fetchone()
+        return id
     def FillProducts(self,n:int):
         for i in range(n):
             #генерация рандомного продукта
@@ -94,21 +96,22 @@ class DataBase():
         users = [m.User(id = i[0], username = i[1], email = i[2], password = i[3])for i in self.cursor.fetchall()]
         return users
 
-    def SelectCurrentUser(self, user):
-        sql_code = ("select Count(*) from users where password = ? and (username = ? or email = ?)")
+    def SelectCurrentUser(self, user) -> m.User:
+        sql_code = ("select * from users where password = ? and (username = ? or email = ?)")
         self.cursor.execute(sql_code, (user.password,user.username,user.email))
-        user = self.cursor.fetchone()
-        if user is None:
-            return False
-        return True
+        fetchone = self.cursor.fetchone()
+        if id is None:
+            return None
+        user = m.User( id = fetchone[0], username= fetchone[1], email= fetchone[2], password= fetchone[3] )
+        return user
 
     def SelectUserByName(self, username):
-        sql_code = ("select Count(*) from users where username = ?")
+        sql_code = ("select id from users where username = ?")
         self.cursor.execute(sql_code, (username,))
-        user = self.cursor.fetchone()
-        if user is None:
-            return True
-        return False
+        id = self.cursor.fetchone()
+        if id is None:
+            return id
+        return id[0]
 
     def InsertProductIntoCatalogue(self, price):
         for i in self.SelectFromProducts():
@@ -164,9 +167,9 @@ class DataBase():
         catalogue = self.cursor.fetchall()
         return catalogue
 
-    def InsertIntoCart(self, user: m.User, product: m.Product):
+    def InsertIntoCart(self, user_id, product_id):
         sql_code = ("INSERT INTO cart (user_id, products_id) VALUES (?,?)")
-        values = (user.id, product.id)
+        values = (user_id, product_id)
         self.cursor.execute(sql_code, values)
 
     def InsertIntoFavorites(self, user: m.User, product: m.Product):
@@ -180,9 +183,10 @@ class DataBase():
         self.cursor.execute(sql_code, values)
 
     def InsertIntoUsers(self, user: m.User):
-        sql_code = ("INSERT INTO users (username, email, password) VALUES (?,?,?)")
+        sql_code = ("INSERT INTO users (username, email, password) VALUES (?,?,?) returning id")
         values = (user.username, user.email, user.password)
         self.cursor.execute(sql_code, values)
+        return self.cursor.fetchone()[0]
 
     def UserAuth(self, user: m.User):
         sql_code = ("SELECT * from users WHERE password = ? AND (username = ? OR email = ?)")
